@@ -89,10 +89,10 @@ class ChaserStrategy
     include Nearest
     def next_direction(chaser_positions, escapee_positions)
       dx, dy = escapee_positions.first
-      cand = candidates(*escapee_positions.first)
-      addition = dx.abs > dy.abs ? cand.first : cand.last
-      cand << addition
-      cand.sample
+      cands = candidates(dx, dy)
+      addition = dx.abs > dy.abs ? cands.first : cands.last
+      cands << addition
+      cands.sample
     end
   end
 end
