@@ -2,6 +2,11 @@ require 'pp'
 
 class ChaserStrategy
 
+  R = [ 1, 0].freeze
+  L = [-1, 0].freeze
+  U = [0, -1].freeze
+  D = [0,  1].freeze
+
   def initialize
   end
 
