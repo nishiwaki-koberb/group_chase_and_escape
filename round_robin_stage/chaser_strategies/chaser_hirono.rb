@@ -13,7 +13,7 @@ class ChaserStrategy
 
   def initialize
     if @@random
-      @strategy = [ OriginalStrategy, NearestVerticalStrategy, NearestHorizontalStrategy ].sample.new
+      @strategy = [ OriginalStrategy, NearestVerticalStrategy, NearestHorizontalStrategy, NearestStrategy ].sample.new
     else
       @strategy = RandomStrategy.new
       @@random = true
@@ -82,6 +82,17 @@ class ChaserStrategy
     include Nearest
     def next_direction(chaser_positions, escapee_positions)
       candidates(*escapee_positions.first).first
+    end
+  end
+
+  class NearestStrategy
+    include Nearest
+    def next_direction(chaser_positions, escapee_positions)
+      dx, dy = escapee_positions.first
+      cand = candidates(*escapee_positions.first)
+      addition = dx.abs > dy.abs ? cand.first : cand.last
+      cand << addition
+      cand.sample
     end
   end
 end
