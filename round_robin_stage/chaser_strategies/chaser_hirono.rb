@@ -9,8 +9,16 @@ class ChaserStrategy
     D = [0,  1].freeze
   end
 
+  @@random = false
+
   def initialize
-    @strategy = [ RandomStrategy, OriginalStrategy, NearestVerticalStrategy, NearestHorizontalStrategy ].sample.new
+    if @@random
+      @strategy = [ OriginalStrategy, NearestVerticalStrategy, NearestHorizontalStrategy ].sample.new
+    else
+      @strategy = RandomStrategy.new
+      @@random = true
+    end
+    p @strategy.class
   end
 
   def next_direction(chaser_positions, escapee_positions)
