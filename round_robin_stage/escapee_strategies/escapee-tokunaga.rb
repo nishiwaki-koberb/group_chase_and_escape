@@ -7,6 +7,7 @@ class EscapeeStrategy
 
   def next_direction(chaser_positions, escapee_positions)
     points = { [1,0] => 0.0, [-1,0] => 0.0, [0,1] => 0.0, [0,-1] => 0.0 }
+    p chaser_positions
     chaser_positions[0..3].each do |dx,dy|
       r = (dx.abs + dy.abs).to_f
       if dx > 0
