@@ -137,6 +137,7 @@ class BattleStage
     @escapees.delete_if do |e|
       chaser_positions, escapee_positions = relative_player_positions_from(e)
       direction = e.next_direction(chaser_positions, escapee_positions)
+      direction = [0,0] unless direction
       validate_direction(direction)
       new_pos = new_position(e.position, direction)
       next if direction == [0,0] or find_player_at(new_pos)

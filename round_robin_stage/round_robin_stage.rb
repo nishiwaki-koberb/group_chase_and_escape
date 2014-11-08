@@ -24,6 +24,7 @@ chaser_strategies.each_with_index do |chaser,ci|
       stage = BattleStage.new(SYSTEM_SIZE, SYSTEM_SIZE, 5, 10)
       stage.update until stage.finished? or stage.timestep >= MAX_TIMESTEP
       $stderr.puts "    result: #{stage.timestep}"
+      $stderr.puts "    num_survivors: #{stage.num_escapees}"
       stage.timestep
     end
   end
@@ -58,7 +59,7 @@ averages = escapee_strategies.map do |escapee|
   ave = chaser_strategies.map do |chaser|
     a = results[chaser][escapee]
     a.inject(:+).to_f/a.size
-  end.inject(:+).to_f/escapee_strategies.size
+  end.inject(:+).to_f/chaser_strategies.size
   [File.basename(escapee,'.rb'), ave]
 end
 averages.sort_by {|a| a[1] }.reverse.map {|a| a.join(":\t") }.each {|s| puts s}
