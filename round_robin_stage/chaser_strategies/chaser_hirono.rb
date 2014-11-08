@@ -7,16 +7,17 @@ class ChaserStrategy
     L = [-1, 0].freeze
     U = [0, -1].freeze
     D = [0,  1].freeze
+    S = [0,  0].freeze
   end
 
-  @@random = false
+  @@trickstar = false
 
   def initialize
-    if @@random
-      @strategy = [ OriginalStrategy, NearestVerticalStrategy, NearestHorizontalStrategy, NearestStrategy ].sample.new
+    if @@trickstar
+      @strategy = [ OriginalStrategy, NearestVerticalStrategy, NearestHorizontalStrategy, NearestStrategy, Nearest2Strategy, MixedStrategy ].sample.new
     else
-      @strategy = RandomStrategy.new
-      @@random = true
+      @strategy = TrickStar.new
+      @@trickstar = true
     end
     p @strategy.class
   end
@@ -54,13 +55,17 @@ class ChaserStrategy
         nil
       end
     end
+    def distance(dx, dy = 0)
+      dx, dy = *dx if Array === dx
+      Math.sqrt(dx ** 2 + dy ** 2)
+    end
 
-    module_function :candidates, :dir_h, :dir_v
+    module_function :candidates, :dir_h, :dir_v, :distance
   end
 
   class RandomStrategy
     def next_direction(chaser_positions, escapee_positions)
-      [ R, L, U, D, L, D, L ].sample
+      [ S, R, L, U, D, L, D, L ].sample
     end
   end
 
@@ -93,6 +98,31 @@ class ChaserStrategy
       addition = dx.abs > dy.abs ? cands.first : cands.last
       cands << addition
       cands.sample
+    end
+  end
+
+  class Nearest2Strategy < NearestStrategy
+    def next_direction(chaser_positions, escapee_positions)
+      escapee_positions.shift if 1 < escapee_positions.size
+      super(chaser_positions, escapee_positions)
+    end
+  end
+
+  class MixedStrategy < NearestStrategy
+    def next_direction(chaser_positions, escapee_positions)
+      dx, dy = escapee_positions.first
+      cdx, cdy = chaser_positions.first
+      if distance(cdx, cdy) < distance(dx, dy) && 0 <= cdx * dx && 0 <= cdy * dy
+        super(chaser_positions, [ escapee_positions.first(2).last ])
+      else
+        super(chaser_positions, [[dx, dy]])
+      end
+    end
+  end
+
+  class TrickStar < NearestStrategy
+    def next_direction(chaser_positions, escapee_positions)
+      [ [ S, R, L, U, D, L, D, L ].sample, super(chaser_positions, [escapee_positions.last]) ].sample
     end
   end
 end
