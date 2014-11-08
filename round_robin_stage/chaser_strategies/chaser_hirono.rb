@@ -2,53 +2,77 @@ require 'pp'
 
 class ChaserStrategy
 
-  R = [ 1, 0].freeze
-  L = [-1, 0].freeze
-  U = [0, -1].freeze
-  D = [0,  1].freeze
+  unless defined? R
+    R = [ 1, 0].freeze
+    L = [-1, 0].freeze
+    U = [0, -1].freeze
+    D = [0,  1].freeze
+  end
 
   def initialize
-    @strategy = [ OriginalStrategy, NearestVerticalStrategy, NearestHorizontalStrategy ].sample.new
+    @strategy = [ RandomStrategy, OriginalStrategy, NearestVerticalStrategy, NearestHorizontalStrategy ].sample.new
   end
 
   def next_direction(chaser_positions, escapee_positions)
-    @strategy.next_direction(chaser_positions, escapee_positions)
-  end
-
-  class Nearest
-    def candidates(dx, dy)
-      candidates = []
-      if dx > 0
-        candidates.push R
-      elsif dx < 0
-        candidates.push L
-      end
-      if dy > 0
-        candidates.push D
-      elsif dy < 0
-        candidates.push U
-      end
-      candidates
+    if escapee_positions.empty?
+      [0, 0]
+    else
+      @strategy.next_direction(chaser_positions, escapee_positions)
     end
   end
 
-  class OriginalStrategy < Nearest
+  module Nearest
+    def candidates(dx, dy)
+      candidates = []
+      candidates.push dir_h(dx)
+      candidates.push dir_v(dy)
+      candidates.compact
+    end
+    def dir_h(dx)
+      if dx > 0
+        R
+      elsif dx < 0
+        L
+      else
+        nil
+      end
+    end
+    def dir_v(dy)
+      if dy > 0
+        D
+      elsif dy < 0
+        U
+      else
+        nil
+      end
+    end
+
+    module_function :candidates
+  end
+
+  class RandomStrategy
     def next_direction(chaser_positions, escapee_positions)
-      return [0,0] if escapee_positions.empty?
+      [ R, L, U, D ].sample
+    end
+  end
+
+  class OriginalStrategy
+    include Nearest
+    def next_direction(chaser_positions, escapee_positions)
       candidates(*escapee_positions.first).sample
     end
   end
 
-  class NearestVerticalStrategy < Nearest
+  class NearestVerticalStrategy
+    include Nearest
     def next_direction(chaser_positions, escapee_positions)
-      return [0,0] if escapee_positions.empty?
       candidates(*escapee_positions.first).last
     end
   end
 
-  class NearestHorizontalStrategy < Nearest
+  class NearestHorizontalStrategy
+    include Nearest
     def next_direction(chaser_positions, escapee_positions)
-      return [0,0] if escapee_positions.empty?
       candidates(*escapee_positions.first).first
     end
   end
