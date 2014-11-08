@@ -19,7 +19,6 @@ class ChaserStrategy
     distance = dx.abs + dy.abs
     add_history @distance_history, distance
 
-    direction = stay
     if @distance_history.uniq.size == 1 && @direction_history.uniq.size == 1
       direction = all.sample
     elsif anyone_near_by?(chaser_positions)
