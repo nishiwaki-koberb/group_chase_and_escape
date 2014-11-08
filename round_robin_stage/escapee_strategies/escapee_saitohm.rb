@@ -13,7 +13,6 @@ class EscapeeStrategy
 
     chaser_positions.each {|dx,dy|
       next if  ( dx.abs > RANGE || dy.abs > RANGE )
-      p "dx=#{dx},dy=#{dy}"
       if dx < 0
         up_count += 1
       elsif dx > 0
@@ -25,7 +24,6 @@ class EscapeeStrategy
         right_count += 1
       end
     }
-    p "up=#{up_count},down=#{down_count},left=#{left_count},right=#{right_count}"
 
     if up_count < down_count
       up_down_max = down_count
