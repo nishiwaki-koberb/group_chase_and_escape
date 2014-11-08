@@ -23,6 +23,7 @@ class EscapeeStrategy
     end
     direction = points.max {|a,b| a[1] <=> b[1] }[0]
     @path.push(direction)
+    direction
     #@path.each do |pathelement|
     #  if pathelement == direction
     #    return direction.sample
