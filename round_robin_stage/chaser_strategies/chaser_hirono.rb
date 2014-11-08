@@ -10,14 +10,16 @@ class ChaserStrategy
     S = [0,  0].freeze
   end
 
-  @@trickstar = false
+  @@leader = nil
+  @@trickstar = nil
 
   def initialize
-    if @@trickstar
-      @strategy = [ OriginalStrategy, NearestVerticalStrategy, NearestHorizontalStrategy, NearestStrategy, Nearest2Strategy, MixedStrategy ].sample.new
+    if @@trickstar.nil?
+      @@trickstar = @strategy = TrickStar.new
+    elsif @@leader.nil?
+      @@leader = @strategy = LeaderStrategy.new
     else
-      @strategy = TrickStar.new
-      @@trickstar = true
+      @strategy = TriangleStrategy.new
     end
   end
 
@@ -119,9 +121,42 @@ class ChaserStrategy
     end
   end
 
+  class LeaderStrategy < NearestStrategy
+    def initialize
+      @chasers = Array.new(4, [0, 0])
+    end
+
+    def next_direction(chaser_positions, escapee_positions)
+      @chasers = chaser_positions.dup
+      super
+    end
+
+    def find_in(chaser_positions)
+      candidates = chaser_positions.select { |cdx, cdy| @chasers.any { |dx, dy| cdx == -dx && cdy == -dy } }
+      if 1 < candidates
+        candidates2 = candidates.select { |cdx, cdy| chaser_positions.map { |dx, dy| [ -cdx + dx, -cdy + dy ] }.select { |dx, dy| @chasers.any { |tdx, tdy| dx == tdx && dy == tdy } } }
+        candidates2.empty? ? candidate.first : candidates2.first
+      else
+        candidates.first
+      end
+    end
+  end
+
+  class TriangleStrategy < NearestStrategy
+    def next_direction(chaser_positions, escapee_positions)
+      chasers = (chaser_positions + [ [0, 0] ]).sort_by { |dx, dy| dx }
+      ldx, ldy = chasers.first
+      escapings = escapee_positions.map {|dx, dy| [ ldx + dx, ldy + dy ] }.sort_by { |dx, dy| dx }
+      tdx, tdy = escapings.first
+      dx = tdx - ldx
+      dy = tdy - ldy
+      super(chaser_positions, [[dx, dy]])
+    end
+  end
+
   class TrickStar < NearestStrategy
     def next_direction(chaser_positions, escapee_positions)
-      [ [ S, R, L, U, D, L, D, L ].sample, super(chaser_positions, [escapee_positions.last]) ].sample
+      [ S, L, D, L, D, L, super(chaser_positions, [escapee_positions.last]) ].sample
     end
   end
 end
