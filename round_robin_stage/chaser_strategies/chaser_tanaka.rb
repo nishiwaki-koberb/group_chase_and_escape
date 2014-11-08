@@ -3,6 +3,8 @@ require 'pp'
 class ChaserStrategy
 
   def initialize
+    @count = 0
+    @previous_direction = 0
   end
 
   def distance(position)
@@ -18,6 +20,23 @@ class ChaserStrategy
 
   def next_direction(chaser_positions, escapee_positions)
     return [0,0] if escapee_positions.empty?
+
+    direction = chase_direction(chaser_positions, escapee_positions)
+
+    if @previous_direction == direction
+      @count += 1
+    end
+    @previous_direction = direction
+
+    if @count == 10
+      @count = 0
+      candidate = [[1,0],[-1,0],[0,1],[0,-1]]
+      return candidate.sample
+    end
+    return direction
+  end
+
+  def chase_direction(chaser_positions, escapee_positions)
 
     nearest_chaser = chaser_positions.first
     nearest_escapee = escapee_positions.first
