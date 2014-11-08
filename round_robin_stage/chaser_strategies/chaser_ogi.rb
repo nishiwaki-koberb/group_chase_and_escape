@@ -2,9 +2,9 @@ require 'pp'
 
 class ChaserStrategy
   @@chaser_count = 0
-  ZENIGATA1_ID = [1]
-  ZENIGATA2_ID = [2]
-  STEP_LIMIT = 10
+  @@zenigata1_id = [1]
+  @@zenigata2_id = [2]
+  @@step_limit = 10
 
   attr_accessor :id, :from_initial_position, :limit, :step
 
@@ -18,10 +18,10 @@ class ChaserStrategy
 
   def next_direction(chaser_positions, escapee_positions)
     return [0,0] if escapee_positions.empty?
-    return escapee_position escapee_positions.first if ZENIGATA1_ID.include? @id
-    return escapee_position escapee_positions.first if ZENIGATA2_ID.include? @id
+    return escapee_position escapee_positions.first if @@zenigata1_id.include? @id
+    return escapee_position escapee_positions.first if @@zenigata2_id.include? @id
 
-    if step >= STEP_LIMIT
+    if step >= @@step_limit
       escapee_id = 0
       escapee_id = 1 if escapee_positions.count >= 2
       return escapee_position escapee_positions[escapee_id]
