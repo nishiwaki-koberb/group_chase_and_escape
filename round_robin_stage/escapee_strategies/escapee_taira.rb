@@ -5,38 +5,25 @@ class EscapeeStrategy
   end
 
   def next_direction(chaser_positions, escapee_positions)
-    candidate = [[0,1], [0, -1], [1, 0], [-1, 0]]
 
-    chaser_positions[0..0].each do |dx, dy|
-      if dx.abs == dy.abs
-        if dx > 0
-          candidate.delete([1, 0])
-        elsif dx < 0
-          candidate.delete([-1, 0])
-        end
-        return candidate[0] if candidate.count == 1
-        if dy > 0
-          candidate.delete([0, 1])
-        elsif dy < 0
-          candidate.delete([0, -1])
-        end
-      elsif dx.abs > dy.abs
-        if dy > 0
-          candidate.delete([0, 1])
-        else
-          candidate.delete([0, -1])
-        end
-      elsif dx.abs < dy.abs
-        if dx > 0
-          candidate.delete([1, 0])
-        else
-          candidate.delete([-1, 0])
-        end
-      end
-      if candidate.count == 1
-        return candidate[0]
+    near_chaser = chaser_positions.first
+
+    near_chaser_distance = near_chaser[0].abs + near_chaser[1].abs
+
+    return [0, 0] if near_chaser_distance > 5
+
+    points = { [1,0] => 0.0, [-1,0] => 0.0, [0,1] => 0.0, [0,-1] => 0.0 }
+
+    next_candidate = [[1,0], [-1, 0], [0, 1], [0, -1]]
+
+    next_candidate.each do |next_x, next_y|
+      chaser_positions.each do |dx, dy|
+        next_chaser_x = dx - next_x
+        next_chaser_y = dy - next_y
+        points[[next_x, next_y]] += next_chaser_x.abs + next_chaser_y.abs
       end
     end
-    candidate.sample
+    direction = points.max {|a,b| a[1] <=> b[1] }[0]
+    direction
   end
 end
