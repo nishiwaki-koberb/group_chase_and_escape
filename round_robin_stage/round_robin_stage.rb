@@ -58,7 +58,7 @@ averages = escapee_strategies.map do |escapee|
   ave = chaser_strategies.map do |chaser|
     a = results[chaser][escapee]
     a.inject(:+).to_f/a.size
-  end.inject(:+).to_f/escapee_strategies.size
+  end.inject(:+).to_f/chaser_strategies.size
   [File.basename(escapee,'.rb'), ave]
 end
 averages.sort_by {|a| a[1] }.reverse.map {|a| a.join(":\t") }.each {|s| puts s}
