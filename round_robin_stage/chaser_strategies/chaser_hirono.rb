@@ -6,6 +6,12 @@ class ChaserStrategy
   end
 
   def next_direction(chaser_positions, escapee_positions)
+    original_strategy(chaser_positions, escapee_positions)
+  end
+
+  private
+
+  def original_strategy(chaser_positions, escapee_positions)
     return [0,0] if escapee_positions.empty?
     dx, dy = escapee_positions.first
     candidate = []
