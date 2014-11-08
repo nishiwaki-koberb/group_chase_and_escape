@@ -10,12 +10,6 @@ class EscapeeStrategy
     position[0].abs + position[1].abs
   end
 
-  # 同じ方向か
-  def is_same_direction?(position1, position2)
-    dx1, dy1 = position1
-    dx2, dy2 = position2
-  end
-
   def next_direction(chaser_positions, escapee_positions)
     nearest_chaser = chaser_positions.first
     nearest_escapee = escapee_positions.first
@@ -23,7 +17,7 @@ class EscapeeStrategy
     nearest_chaser_distance = distance(nearest_chaser)
     nearest_escapee_distance = distance(nearest_escapee)
 
-    if nearest_escapee_distance > nearest_chaser_distance
+    if nearest_escapee_distance >= nearest_chaser_distance
       # chaserから離れる
       dx, dy = chaser_positions.first
       candidate = [[1,0],[-1,0],[0,1],[0,-1]]
