@@ -3,17 +3,18 @@ require File.join(File.dirname(__FILE__), '../battle_stage')
 SYSTEM_SIZE = 50
 NUM_CHASERS = 5
 NUM_ESCAPEES = 10
-MAX_TIMESTEP = 3000
-NUM_RUNS = 20
+MAX_TIMESTEP = 1000
+NUM_RUNS = 10
 
 chaser_strategies = Dir.glob(File.join(File.dirname(__FILE__),"chaser_strategies/*.rb"))
 escapee_strategies = Dir.glob(File.join(File.dirname(__FILE__),"escapee_strategies/*.rb"))
 
 results = {}
 
-chaser_strategies.each do |chaser|
+chaser_strategies.each_with_index do |chaser,ci|
   results[chaser] = {}
-  escapee_strategies.each do |escapee|
+  escapee_strategies.each_with_index do |escapee,ei|
+    $stderr.puts "Progress: #{ci*escapee_strategies.size+ei+1}/#{chaser_strategies.size*escapee_strategies.size}"
     $stderr.puts "#{File.basename(chaser,'.rb')} v.s. #{File.basename(escapee,'.rb')}"
     results[chaser][escapee] = (1..NUM_RUNS).map do |i|
       $stderr.puts "  round #{i}"
