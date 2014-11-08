@@ -1,11 +1,11 @@
 require 'pp'
 
 class ChaserStrategy
-  R = [1, 0]
-  L = [-1, 0]
-  U = [0, 1]
-  D = [0, -1]
-  ALL = [R, L, U, D]
+  def r; [1, 0]; end
+  def l; [-1, 0]; end
+  def u; [0, 1]; end
+  def d; [0, -1]; end
+  def all; [r, l, u, d]; end
 
   def initialize
     @distance_history = [0, 0, 0, 0, 0]
@@ -17,7 +17,7 @@ class ChaserStrategy
     distance = dx.abs + dy.abs
     add_history distance
     if @distance_history.uniq.size == 1
-      ALL.sample
+      all.sample
     else
       candidate = []
       if dx > 0
