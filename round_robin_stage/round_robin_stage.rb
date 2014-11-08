@@ -24,6 +24,7 @@ chaser_strategies.each_with_index do |chaser,ci|
       stage = BattleStage.new(SYSTEM_SIZE, SYSTEM_SIZE, 5, 10)
       stage.update until stage.finished? or stage.timestep >= MAX_TIMESTEP
       $stderr.puts "    result: #{stage.timestep}"
+      $stderr.puts "    num_survivors: #{stage.num_escapees}"
       stage.timestep
     end
   end
