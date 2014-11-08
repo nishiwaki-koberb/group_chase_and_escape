@@ -8,7 +8,7 @@ class ChaserStrategy
   D = [0,  1].freeze
 
   def initialize
-    @strategy = [ OriginalStrategy, NearestVerticalStrategy, NearestHorizontalStrategy ].sample.new
+    @strategy = [ RandomStrategy, OriginalStrategy, NearestVerticalStrategy, NearestHorizontalStrategy ].sample.new
   end
 
   def next_direction(chaser_positions, escapee_positions)
@@ -22,19 +22,36 @@ class ChaserStrategy
   module Nearest
     def candidates(dx, dy)
       candidates = []
-      if dx > 0
-        candidates.push R
-      elsif dx < 0
-        candidates.push L
-      end
-      if dy > 0
-        candidates.push D
-      elsif dy < 0
-        candidates.push U
-      end
-      candidates
+      candidates.push dir_h(dx)
+      candidates.push dir_v(dy)
+      candidates.compact
     end
+    def dir_h(dx)
+      if dx > 0
+        R
+      elsif dx < 0
+        L
+      else
+        nil
+      end
+    end
+    def dir_v(dy)
+      if dy > 0
+        D
+      elsif dy < 0
+        U
+      else
+        nil
+      end
+    end
+
     module_function :candidates
+  end
+
+  class RandomStrategy
+    def next_direction(chaser_positions, escapee_positions)
+      [ R, L, U, D ].sample
+    end
   end
 
   class OriginalStrategy
