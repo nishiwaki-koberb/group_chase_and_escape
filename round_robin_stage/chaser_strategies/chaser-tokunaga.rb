@@ -17,7 +17,6 @@ class ChaserStrategy
     r = 5.0 / (dx.abs + dy.abs)
     
     unless @chase_history 
-       p @chase_history
        @chase_history.first > chase_length
        return @direction_history.first
     end
