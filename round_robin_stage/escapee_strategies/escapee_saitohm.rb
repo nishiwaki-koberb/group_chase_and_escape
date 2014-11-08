@@ -1,9 +1,9 @@
 require 'pp'
 
 class EscapeeStrategy
-  RANGE=5
 
   def next_direction(chaser_positions, escapee_positions)
+    range = 3
     up_count = 0
     down_count = 0
     left_count = 0
@@ -12,16 +12,26 @@ class EscapeeStrategy
     left_right_max = 0
 
     chaser_positions.each {|dx,dy|
-      next if  ( dx.abs > RANGE || dy.abs > RANGE )
-      if dx < 0
+      next if dx.abs > range || dy.abs > range
+
+      if dy == 1
+        up_count += 10
+      elsif dy == -1
+        down_count += 10
+      elsif dy < 0
         up_count += 1
-      elsif dx > 0
+      elsif dy > 0
         down_count += 1
       end
-      if dy < 0
-        left_count += 1
-      elsif dy > 0
+
+      if dx == 1
+        left_count += 10
+      elsif dx == -1
+        right_count += 10
+      elsif dx < 0
         right_count += 1
+      elsif dx > 0
+        left_count += 1
       end
     }
 
@@ -42,9 +52,9 @@ class EscapeeStrategy
     end
 
     if up_down_max > left_right_max
-      return up_count < down_count ? [1,0] : [-1,0]
+      return up_count > down_count ? [0,1] : [0,-1]
     elsif up_down_max < left_right_max
-      return left_count > right_count ? [0,1] : [0,-1]
+      return right_count > left_count ? [1,0] : [-1,0]
     else
       return [1,0]
     end
