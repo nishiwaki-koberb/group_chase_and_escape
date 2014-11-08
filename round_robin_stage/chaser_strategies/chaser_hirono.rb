@@ -13,6 +13,10 @@ class ChaserStrategy
   @@leader = nil
   @@trickstar = nil
 
+  def self.leader
+    @@leader
+  end
+
   def initialize
     if @@trickstar.nil?
       @@trickstar = @strategy = TrickStar.new
@@ -124,18 +128,21 @@ class ChaserStrategy
   class LeaderStrategy < NearestStrategy
     def initialize
       @chasers = Array.new(4, [0, 0])
+      @last_move = [0, 0]
     end
 
     def next_direction(chaser_positions, escapee_positions)
       @chasers = chaser_positions.dup
-      super
+      @last_move = super
     end
 
-    def find_in(chaser_positions)
-      candidates = chaser_positions.select { |cdx, cdy| @chasers.any { |dx, dy| cdx == -dx && cdy == -dy } }
-      if 1 < candidates
-        candidates2 = candidates.select { |cdx, cdy| chaser_positions.map { |dx, dy| [ -cdx + dx, -cdy + dy ] }.select { |dx, dy| @chasers.any { |tdx, tdy| dx == tdx && dy == tdy } } }
-        candidates2.empty? ? candidate.first : candidates2.first
+    def find_from(chaser_positions)
+      ldx = @last_move[0]
+      ldy = @last_move[1]
+      candidates = chaser_positions.select { |cdx, cdy| @chasers.any? { |dx, dy| (cdx - ldx) == -dx && (cdy - ldy) == -dy } }
+      if 1 < candidates.length
+        candidates2 = candidates.select { |cdx, cdy| chaser_positions.map { |dx, dy| [ -cdx + dx, -cdy + dy ] }.select { |dx, dy| @chasers.any? { |tdx, tdy| (dx - ldx) == tdx && (dy - ldy) == tdy } } }
+        (candidates2.empty? ? candidate : candidates2).first
       else
         candidates.first
       end
@@ -144,9 +151,9 @@ class ChaserStrategy
 
   class TriangleStrategy < NearestStrategy
     def next_direction(chaser_positions, escapee_positions)
-      chasers = (chaser_positions + [ [0, 0] ]).sort_by { |dx, dy| dx }
-      ldx, ldy = chasers.first
-      escapings = escapee_positions.map {|dx, dy| [ ldx + dx, ldy + dy ] }.sort_by { |dx, dy| dx }
+      leader = ChaserStrategy.leader.find_from(chaser_positions)
+      ldx, ldy = leader || [0, 0]
+      escapings = escapee_positions.map {|dx, dy| [ ldx + dx, ldy + dy ] }.sort_by { |dxy| distance dxy }
       tdx, tdy = escapings.first
       dx = tdx - ldx
       dy = tdy - ldy
