@@ -55,12 +55,12 @@ class ChaserStrategy
       end
     end
 
-    module_function :candidates
+    module_function :candidates, :dir_h, :dir_v
   end
 
   class RandomStrategy
     def next_direction(chaser_positions, escapee_positions)
-      [ R, L, U, D ].sample
+      [ R, L, U, D, L, D, L ].sample
     end
   end
 
