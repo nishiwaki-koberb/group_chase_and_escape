@@ -3,11 +3,11 @@ require 'pp'
 class EscapeeStrategy
   
   def initialize
+    @path =[]
   end
 
   def next_direction(chaser_positions, escapee_positions)
     points = { [1,0] => 0.0, [-1,0] => 0.0, [0,1] => 0.0, [0,-1] => 0.0 }
-    p chaser_positions
     chaser_positions[0..3].each do |dx,dy|
       r = (dx.abs + dy.abs).to_f
       if dx > 0
@@ -22,6 +22,13 @@ class EscapeeStrategy
       end
     end
     direction = points.max {|a,b| a[1] <=> b[1] }[0]
-    direction
+    @path.push(direction)
+    #@path.each do |pathelement|
+    #  if pathelement == direction
+    #    return direction.sample
+    #  else
+    #    return direction  
+    #  end
+    #end
   end
 end
