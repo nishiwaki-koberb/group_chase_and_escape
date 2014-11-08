@@ -1,8 +1,13 @@
 require 'pp'
 
 class ChaserStrategy
+  @@count = 0
+
+  attr_accessor :id
 
   def initialize
+    @@count = @@count + 1
+    @id = @@count
   end
 
   def next_direction(chaser_positions, escapee_positions)
