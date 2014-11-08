@@ -17,7 +17,7 @@ class ChaserStrategy
     if escapee_positions.empty?
       [0, 0]
     else
-      @strategy.next_direction(chaser_positions, escapee_positions)
+      @strategy.next_direction(chaser_positions, escapee_positions) || [0, 0]
     end
   end
 
