@@ -8,7 +8,7 @@ class ChaserStrategy
   def all; [r, l, u, d]; end
 
   def initialize
-    @distance_history = [0, 0, 0, 0, 0]
+    @distance_history = Array.new(5, 0)
   end
 
   def next_direction(chaser_positions, escapee_positions)
