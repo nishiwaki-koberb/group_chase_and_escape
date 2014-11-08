@@ -19,7 +19,6 @@ class ChaserStrategy
       @strategy = TrickStar.new
       @@trickstar = true
     end
-    p @strategy.class
   end
 
   def next_direction(chaser_positions, escapee_positions)
