@@ -1,12 +1,6 @@
 require 'pp'
 
 class ChaserStrategy
-  def r; [1, 0]; end
-  def l; [-1, 0]; end
-  def u; [0, 1]; end
-  def d; [0, -1]; end
-  def all; [r, l, u, d]; end
-
   def initialize
     @distance_history = Array.new(5, 0)
   end
@@ -38,4 +32,10 @@ class ChaserStrategy
     @distance_history.shift
     @distance_history.push distance
   end
+
+  def r; [1, 0]; end
+  def l; [-1, 0]; end
+  def u; [0, 1]; end
+  def d; [0, -1]; end
+  def all; [r, l, u, d]; end
 end
