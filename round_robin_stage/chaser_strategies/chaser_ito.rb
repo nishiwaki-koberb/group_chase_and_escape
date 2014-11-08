@@ -21,14 +21,14 @@ class ChaserStrategy
     else
       candidate = []
       if dx > 0
-        candidate.push [1,0]
+        candidate.push r
       elsif dx < 0
-        candidate.push [-1,0]
+        candidate.push l
       end
       if dy > 0
-        candidate.push [0,1]
+        candidate.push u
       elsif dy < 0
-        candidate.push [0,-1]
+        candidate.push d
       end
       candidate.sample
     end
