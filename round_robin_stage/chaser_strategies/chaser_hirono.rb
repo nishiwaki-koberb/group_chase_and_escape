@@ -12,10 +12,14 @@ class ChaserStrategy
   end
 
   def next_direction(chaser_positions, escapee_positions)
-    @strategy.next_direction(chaser_positions, escapee_positions)
+    if escapee_positions.empty?
+      [0, 0]
+    else
+      @strategy.next_direction(chaser_positions, escapee_positions)
+    end
   end
 
-  class Nearest
+  module Nearest
     def candidates(dx, dy)
       candidates = []
       if dx > 0
@@ -30,25 +34,26 @@ class ChaserStrategy
       end
       candidates
     end
+    module_function :candidates
   end
 
-  class OriginalStrategy < Nearest
+  class OriginalStrategy
+    include Nearest
     def next_direction(chaser_positions, escapee_positions)
-      return [0,0] if escapee_positions.empty?
       candidates(*escapee_positions.first).sample
     end
   end
 
-  class NearestVerticalStrategy < Nearest
+  class NearestVerticalStrategy
+    include Nearest
     def next_direction(chaser_positions, escapee_positions)
-      return [0,0] if escapee_positions.empty?
       candidates(*escapee_positions.first).last
     end
   end
 
-  class NearestHorizontalStrategy < Nearest
+  class NearestHorizontalStrategy
+    include Nearest
     def next_direction(chaser_positions, escapee_positions)
-      return [0,0] if escapee_positions.empty?
       candidates(*escapee_positions.first).first
     end
   end
