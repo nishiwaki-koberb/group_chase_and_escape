@@ -116,7 +116,7 @@ module Hirono
   end
 
 
-  class ChaserStrategy
+  class ChaserTeam
 
     @@leader = nil
     @@trickstar = nil
@@ -169,7 +169,7 @@ module Hirono
 
     class TriangleStrategy < Hirono::NearestChaser
       def next_direction(chaser_positions, escapee_positions)
-        leader = ChaserStrategy.leader.find_from(chaser_positions)
+        leader = ChaserTeam.leader.find_from(chaser_positions)
         ldx, ldy = leader || [0, 0]
         escapings = escapee_positions.map {|dx, dy| [ ldx + dx, ldy + dy ] }.sort_by { |dxy| distance dxy }
         tdx, tdy = escapings.first
@@ -184,7 +184,7 @@ end
 
 class ChaserStrategy
   def initialize
-    @impl = Hirono::ChaserStrategy.new
+    @impl = Hirono::ChaserTeam.new
   end
   def next_direction(chaser_positions, escapee_positions)
     @impl.next_direction(chaser_positions, escapee_positions)
