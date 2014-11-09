@@ -10,20 +10,26 @@ module Hirono
     S = [0,  0].freeze
   end
 
-  module Nearest
-    def candidates(dx, dy)
-      candidates = []
-      candidates.push dir_h(dx)
-      candidates.push dir_v(dy)
-      candidates.compact
+  module Helpers
+    def away_x(dx)
+      if dx > 0; L
+      elsif dx < 0; R
+      else nil
+      end
     end
-    def dir_h(dx)
+    def away_y(dy)
+      if dy > 0; U
+      elsif dy < 0; D
+      else nil
+      end
+    end
+    def for_x(dx)
       if dx > 0; R
       elsif dx < 0; L
       else nil
       end
     end
-    def dir_v(dy)
+    def for_y(dy)
       if dy > 0; D
       elsif dy < 0; U
       else nil
@@ -33,8 +39,15 @@ module Hirono
       dx, dy = *dx if Array === dx
       Math.sqrt(dx ** 2 + dy ** 2)
     end
+    module_function :away_x, :away_y, :for_x, :for_y, :distance
+  end
+  module Nearest
+    include Helpers
+    def candidates(dx, dy)
+      [ for_x(dx), for_y(dy) ].compact
+    end
 
-    module_function :candidates, :dir_h, :dir_v, :distance
+    module_function :candidates
   end
 
   class ChaserStrategy
