@@ -50,6 +50,72 @@ module Hirono
     module_function :candidates
   end
 
+  class RandomChaser
+    def next_direction(chaser_positions, escapee_positions)
+      [ S, R, L, U, D, L, D, L ].sample
+    end
+  end
+
+  class OriginalChaser
+    include Nearest
+    def next_direction(chaser_positions, escapee_positions)
+      candidates(*escapee_positions.first).sample
+    end
+  end
+
+  # 縦方向に近付くのを優先
+  class NearestVerticalChaser
+    include Nearest
+    def next_direction(chaser_positions, escapee_positions)
+      candidates(*escapee_positions.first).last
+    end
+  end
+
+  # 横方向に近付くのを優先
+  class NearestHorizontalChaser
+    include Nearest
+    def next_direction(chaser_positions, escapee_positions)
+      candidates(*escapee_positions.first).first
+    end
+  end
+
+  class NearestStrategy
+    include Nearest
+    def next_direction(chaser_positions, escapee_positions)
+      dx, dy = escapee_positions.first
+      cands = candidates(dx, dy)
+      addition = dx.abs > dy.abs ? cands.first : cands.last
+      cands << addition
+      cands.sample
+    end
+  end
+
+  class Nearest2Strategy < NearestStrategy
+    def next_direction(chaser_positions, escapee_positions)
+      escapee_positions.shift if 1 < escapee_positions.size
+      super(chaser_positions, escapee_positions)
+    end
+  end
+
+  class MixedStrategy < NearestStrategy
+    def next_direction(chaser_positions, escapee_positions)
+      dx, dy = escapee_positions.first
+      cdx, cdy = chaser_positions.first
+      if distance(cdx, cdy) < distance(dx, dy) && 0 <= cdx * dx && 0 <= cdy * dy
+        super(chaser_positions, [ escapee_positions.first(2).last ])
+      else
+        super(chaser_positions, [[dx, dy]])
+      end
+    end
+  end
+
+  class TrickStar < NearestStrategy
+    def next_direction(chaser_positions, escapee_positions)
+      [ S, L, D, L, D, L, super(chaser_positions, [escapee_positions.last]) ].sample
+    end
+  end
+
+
   class ChaserStrategy
 
     @@leader = nil
@@ -77,64 +143,7 @@ module Hirono
       end
     end
 
-    class RandomStrategy
-      def next_direction(chaser_positions, escapee_positions)
-        [ S, R, L, U, D, L, D, L ].sample
-      end
-    end
-
-    class OriginalStrategy
-      include Nearest
-      def next_direction(chaser_positions, escapee_positions)
-        candidates(*escapee_positions.first).sample
-      end
-    end
-
-    class NearestVerticalStrategy
-      include Nearest
-      def next_direction(chaser_positions, escapee_positions)
-        candidates(*escapee_positions.first).last
-      end
-    end
-
-    class NearestHorizontalStrategy
-      include Nearest
-      def next_direction(chaser_positions, escapee_positions)
-        candidates(*escapee_positions.first).first
-      end
-    end
-
-    class NearestStrategy
-      include Nearest
-      def next_direction(chaser_positions, escapee_positions)
-        dx, dy = escapee_positions.first
-        cands = candidates(dx, dy)
-        addition = dx.abs > dy.abs ? cands.first : cands.last
-        cands << addition
-        cands.sample
-      end
-    end
-
-    class Nearest2Strategy < NearestStrategy
-      def next_direction(chaser_positions, escapee_positions)
-        escapee_positions.shift if 1 < escapee_positions.size
-        super(chaser_positions, escapee_positions)
-      end
-    end
-
-    class MixedStrategy < NearestStrategy
-      def next_direction(chaser_positions, escapee_positions)
-        dx, dy = escapee_positions.first
-        cdx, cdy = chaser_positions.first
-        if distance(cdx, cdy) < distance(dx, dy) && 0 <= cdx * dx && 0 <= cdy * dy
-          super(chaser_positions, [ escapee_positions.first(2).last ])
-        else
-          super(chaser_positions, [[dx, dy]])
-        end
-      end
-    end
-
-    class LeaderStrategy < NearestStrategy
+    class LeaderStrategy < Hirono::NearestStrategy
       def initialize
         @chasers = Array.new(4, [0, 0])
         @last_move = [0, 0]
@@ -158,7 +167,7 @@ module Hirono
       end
     end
 
-    class TriangleStrategy < NearestStrategy
+    class TriangleStrategy < Hirono::NearestStrategy
       def next_direction(chaser_positions, escapee_positions)
         leader = ChaserStrategy.leader.find_from(chaser_positions)
         ldx, ldy = leader || [0, 0]
@@ -170,11 +179,6 @@ module Hirono
       end
     end
 
-    class TrickStar < NearestStrategy
-      def next_direction(chaser_positions, escapee_positions)
-        [ S, L, D, L, D, L, super(chaser_positions, [escapee_positions.last]) ].sample
-      end
-    end
   end
 end
 
