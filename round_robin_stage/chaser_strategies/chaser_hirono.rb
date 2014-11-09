@@ -79,7 +79,7 @@ module Hirono
     end
   end
 
-  class NearestStrategy
+  class NearestChaser
     include Nearest
     def next_direction(chaser_positions, escapee_positions)
       dx, dy = escapee_positions.first
@@ -90,14 +90,14 @@ module Hirono
     end
   end
 
-  class Nearest2Strategy < NearestStrategy
+  class Nearest2Chaser < NearestChaser
     def next_direction(chaser_positions, escapee_positions)
       escapee_positions.shift if 1 < escapee_positions.size
       super(chaser_positions, escapee_positions)
     end
   end
 
-  class MixedStrategy < NearestStrategy
+  class MixedChaser < NearestChaser
     def next_direction(chaser_positions, escapee_positions)
       dx, dy = escapee_positions.first
       cdx, cdy = chaser_positions.first
@@ -109,7 +109,7 @@ module Hirono
     end
   end
 
-  class TrickStar < NearestStrategy
+  class TrickStar < NearestChaser
     def next_direction(chaser_positions, escapee_positions)
       [ S, L, D, L, D, L, super(chaser_positions, [escapee_positions.last]) ].sample
     end
@@ -143,7 +143,7 @@ module Hirono
       end
     end
 
-    class LeaderStrategy < Hirono::NearestStrategy
+    class LeaderStrategy < Hirono::NearestChaser
       def initialize
         @chasers = Array.new(4, [0, 0])
         @last_move = [0, 0]
@@ -167,7 +167,7 @@ module Hirono
       end
     end
 
-    class TriangleStrategy < Hirono::NearestStrategy
+    class TriangleStrategy < Hirono::NearestChaser
       def next_direction(chaser_positions, escapee_positions)
         leader = ChaserStrategy.leader.find_from(chaser_positions)
         ldx, ldy = leader || [0, 0]
