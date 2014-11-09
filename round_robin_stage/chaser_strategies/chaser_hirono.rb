@@ -50,6 +50,24 @@ module Hirono
     module_function :candidates
   end
 
+  class ChaserWrapper
+    def self.wrap(clazz)
+      new(clazz.new)
+    end
+
+    def initialize(impl)
+      @impl = impl
+    end
+
+    def next_direction(chaser_positions, escapee_positions)
+      if escapee_positions.empty?
+        S
+      else
+        @impl.next_direction(chaser_positions, escapee_positions) || S
+      end
+    end
+  end
+
   class RandomChaser
     def next_direction(chaser_positions, escapee_positions)
       [ S, R, L, U, D, L, D, L ].sample
@@ -125,22 +143,15 @@ module Hirono
       @@leader
     end
 
-    def initialize
-      if @@trickstar.nil?
-        @@trickstar = @strategy = TrickStar.new
-      elsif @@leader.nil?
-        @@leader = @strategy = LeaderStrategy.new
-      else
-        @strategy = TriangleStrategy.new
-      end
-    end
-
-    def next_direction(chaser_positions, escapee_positions)
-      if escapee_positions.empty?
-        [0, 0]
-      else
-        @strategy.next_direction(chaser_positions, escapee_positions) || [0, 0]
-      end
+    def self.newInstance
+      member = if @@trickstar.nil?
+          @@trickstar = TrickStar.new
+        elsif @@leader.nil?
+          @@leader = LeaderStrategy.new
+        else
+          TriangleStrategy.new
+        end
+      ChaserWrapper.new(member)
     end
 
     class LeaderStrategy < Hirono::NearestChaser
@@ -184,7 +195,7 @@ end
 
 class ChaserStrategy
   def initialize
-    @impl = Hirono::ChaserTeam.new
+    @impl = Hirono::ChaserTeam.newInstance
   end
   def next_direction(chaser_positions, escapee_positions)
     @impl.next_direction(chaser_positions, escapee_positions)
