@@ -48,6 +48,10 @@ class ChaserStrategy
 
   def chase(escapee_positions)
     # ターゲットが移動しているので追跡
+    # 移動していない
+    target_x, target_y = @@target
+    return [target_x, target_y] if escapee_positions.include?([target_x, target_y])
+
     # 上に逃げた？
     target_x, target_y = @@target
     target_y += 1
