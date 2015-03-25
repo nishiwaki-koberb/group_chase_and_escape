@@ -1,6 +1,6 @@
 require 'pp'
 
-class EscapeeStrategy
+class SaitohmEscapeeStrategy < EscapeeStrategy
 
   def next_direction(chaser_positions, escapee_positions)
     range = 3

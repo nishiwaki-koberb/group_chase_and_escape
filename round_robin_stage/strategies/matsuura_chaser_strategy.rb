@@ -1,4 +1,4 @@
-class ChaserStategy
+class MatsuuraChaserStrategy < ChaserStrategy
     def initialize
 
     end
@@ -26,7 +26,7 @@ class ChaserStategy
         end
 
         chaser_positions.each do |chaser|
-            escp_dx,escp_dy = closest_escaapee
+            escp_dx,escp_dy = closest_escapee
             chsr_dx,chsr_dy = chaser
             absolute_dx = escp_dx - chsr_dx
             absolute_dy = escp_dy - chsr_dy
@@ -39,24 +39,26 @@ class ChaserStategy
 
        
 
-        candicate = []
+        candidate = []
 
         dx, dy = closest_escapee
         if dx > dy
             if dx > 0
                 candidate.push [1,0]
             elsif dx < 0
-                candicate.push [-1,0]
+                candidate.push [-1,0]
             end
         else
             if dy > 0
-                candicate.push [0,1]
+                candidate.push [0,1]
             elsif dy < 0
-                candicate.push [0,-1]
+                candidate.push [0,-1]
             end
 
         end
 
-        return candicate.sample
+        candidate.push [0,0] if candidate.empty?
+
+        return candidate.sample
     end
 end

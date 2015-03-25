@@ -1,6 +1,26 @@
 require 'pp'
 
 class ChaserStrategy
+  
+  @@subclasses = []
+
+  def self.inherited(child)
+    @@subclasses << child
+  end
+
+  def self.subclasses
+    @@subclasses
+  end
+
+  def initialize
+  end
+
+  def next_direction(chaser_positions, escapee_positions)
+    raise "not implemented"
+  end
+end
+
+class DefaultChaserStrategy < ChaserStrategy
 
   def initialize
   end
@@ -22,3 +42,4 @@ class ChaserStrategy
     candidate.sample
   end
 end
+

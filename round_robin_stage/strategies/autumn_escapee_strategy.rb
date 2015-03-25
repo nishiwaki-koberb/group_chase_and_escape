@@ -1,6 +1,6 @@
 require 'pp'
 
-class EscapeeStrategy
+class AutumnEscapeeStrategy < EscapeeStrategy
   
   def initialize
   end

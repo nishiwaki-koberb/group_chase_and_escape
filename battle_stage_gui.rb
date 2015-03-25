@@ -11,7 +11,8 @@ def setup
   size(700,500)
   @system_size = 50
   @total_num_escapees = 10
-  @stage = BattleStage.new(@system_size,@system_size,5,@total_num_escapees)
+  @stage = BattleStage.new(@system_size,@system_size,5,@total_num_escapees,
+                           ChaserStrategy.subclasses.last, EscapeeStrategy.subclasses.last)
   frame_rate(20)
   text_size(32)
   text_align(RIGHT)

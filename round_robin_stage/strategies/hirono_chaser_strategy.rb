@@ -193,7 +193,7 @@ module Hirono
   end
 end
 
-class ChaserStrategy
+class HironoChaserStrategy < ChaserStrategy
   def initialize
     @impl = Hirono::ChaserTeam.newInstance
   end

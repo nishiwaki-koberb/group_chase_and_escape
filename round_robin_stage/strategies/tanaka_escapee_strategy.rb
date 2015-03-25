@@ -1,6 +1,6 @@
 require 'pp'
 
-class EscapeeStrategy
+class TanakaEscapeeStrategy < EscapeeStrategy
 
   def initialize
   end

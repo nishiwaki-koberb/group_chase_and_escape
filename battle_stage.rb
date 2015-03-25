@@ -1,6 +1,6 @@
 require 'stringio'
 require 'pp'
-require 'pry'
+# require 'pry'
 
 require File.join(File.dirname(__FILE__), "chaser_strategy")
 require File.join(File.dirname(__FILE__), "escapee_strategy")
@@ -9,8 +9,9 @@ class Player
 
   attr_reader :position
 
-  def initialize(pos)
+  def initialize(pos, strategy_class)
     @position = pos
+    @strategy = strategy_class.new
   end
 
   def move_to(new_pos)
@@ -24,46 +25,32 @@ class Player
     $app.fill(*self.class::COLOR)
     $app.ellipse(x,y,rx,ry)
   end
+
+  def next_direction(chaser_positions, escapee_positions)
+    @strategy.next_direction(chaser_positions, escapee_positions)
+  end
 end
 
 class Chaser < Player
 
   COLOR = [255,0,0]
-
-  def initialize(pos)
-    super
-    @strategy = ChaserStrategy.new
-  end
-
-  def next_direction(chaser_positions, escapee_positions)
-    @strategy.next_direction(chaser_positions, escapee_positions)
-  end
 end
 
 class Escapee < Player
 
   COLOR = [0,255,0]
-
-  def initialize(pos)
-    super
-    @strategy = EscapeeStrategy.new
-  end
-
-  def next_direction(chaser_positions, escapee_positions)
-    @strategy.next_direction(chaser_positions, escapee_positions)
-  end
 end
 
 class BattleStage
 
   attr_reader :timestep
 
-  def initialize(lx, ly, num_chaser, num_escapees)
+  def initialize(lx, ly, num_chaser, num_escapees, chaser_strategy_class, escapee_strategy_class)
     @lx, @ly = lx, ly
     @chasers = []
     @escapees = []
-    @chasers = Array.new(num_chaser) { Chaser.new(random_unique_position) }
-    @escapees = Array.new(num_escapees) { Escapee.new(random_unique_position) }
+    @chasers = Array.new(num_chaser) { Chaser.new(random_unique_position, chaser_strategy_class) }
+    @escapees = Array.new(num_escapees) { Escapee.new(random_unique_position, escapee_strategy_class) }
     @timestep = 0
   end
 
@@ -228,12 +215,13 @@ if __FILE__ == $0
   opts.on("-e ESCAPEE_SCRIPT") {|script| load script }
   opts.on("-r RAND_SEED") {|seed| srand(seed.to_i) }
   opts.parse!(ARGV)
-  stage = BattleStage.new(SYSTEM_SIZE, SYSTEM_SIZE, num_chasers, num_escapees)
+  stage = BattleStage.new(SYSTEM_SIZE, SYSTEM_SIZE, num_chasers, num_escapees,
+                          ChaserStrategy.subclasses.last, EscapeeStrategy.subclasses.last)
 
   until stage.finished? or stage.timestep >= max_timestep
     stage.update
     $stderr.puts "#{stage.timestep} #{stage.num_escapees}" if stage.timestep % 10 == 0
   end
-  $stdout.puts "Time for total-catch : #{stage.timestep}"
+  $stdout.puts "Time for entire-catch : #{stage.timestep}"
 end
 

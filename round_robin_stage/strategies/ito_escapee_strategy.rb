@@ -1,6 +1,6 @@
 require 'pp'
 
-class EscapeeStrategy
+class ItoEscapeeStrategy < EscapeeStrategy
   def initialize
     @direction = [[1,0],[-1,0],[0,1],[0,-1]].sample
   end

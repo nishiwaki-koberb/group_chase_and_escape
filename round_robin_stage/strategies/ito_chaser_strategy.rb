@@ -1,6 +1,6 @@
 require 'pp'
 
-class ChaserStrategy
+class ItoChaserStrategy < ChaserStrategy
   def initialize
     @distance_history = Array.new(5, 0)
     @direction_history = Array.new(5, stay)

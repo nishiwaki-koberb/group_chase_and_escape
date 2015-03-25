@@ -25,7 +25,7 @@ group chase and escape (鬼ごっこ)
 
 手順としては鬼・逃亡者のロジックを実装して、上記３種類の鬼ごっこシステムを実行することになります。
 
-鬼・逃亡者のロジックは "ChaserStrategy", "EscapeeStrategy" クラスに実装します。
+鬼・逃亡者のロジックは "ChaserStrategy", "EscapeeStrategy" を継承したクラスに実装します。
 （詳細は後ほど。）
 
 ### GUIでの実行
@@ -35,10 +35,11 @@ group chase and escape (鬼ごっこ)
   - [Ruby-Processingのインストール方法](http://qiita.com/yohm/items/f3f82f423b507cec1dcc)
 - 実行コマンドは以下の通りです。
   ```
-  rp5 run battle_stage_gui.rb -c chaser_strategy.rb -e escapee_strategy.rb -r 1234
+  rp5 run battle_stage_gui.rb -c my_chaser_strategy.rb -e your_escapee_strategy.rb -r 1234
   ```
-  - -c オプションに ChaesrStrategy, -e オプションに EscapeeStrategy を実装したスクリプトへのパスを与えてください。
-    - 指定がない場合はデフォルトのロジックを使います。
+  - ユーザーはChaserStrategy, EscapeeStrategyを継承した自前のクラスを実装します。
+    - -c オプションに ChaesrStrategy, -e オプションに EscapeeStrategy を継承したクラスのスクリプトへのパスを与えてください。
+      - 指定がない場合はデフォルトのロジックを使います。
   - -r オプションに乱数の種を指定してください。指定がない場合はランダムな値を使います。
 
 ### CUIでの実行
@@ -49,19 +50,19 @@ group chase and escape (鬼ごっこ)
   ```
   ruby battle_stage.rb -c chaser_strategy.rb -e escapee_strategy.rb -r 1234
   ```
-  - -c オプションに ChaesrStrategy, -e オプションに EscapeeStrategy を実装したスクリプトへのパスを与えてください。
+  - -c オプションに ChaesrStrategy, -e オプションに EscapeeStrategy を継承したクラスのスクリプトへのパスを与えてください。
     - 指定がない場合はデフォルトのロジックを使います。
   - -r オプションに乱数の種を指定してください。指定がない場合はランダムな値を使います。
 
 ### 総当たり戦の実行
 
 - 複数の鬼や逃亡者を作って対決させてたいとき、総当たり戦を行うことができます。
-- まず ChaserStrategy, EscapeeStrategy クラスを実装したスクリプトを "round\_robin\_stage/chaser\_strategies/", "round\_robin\_stage/escapee\_strategies/" のディレクトリに置いてください。
-  - ファイル名は重複してはいけないので、"chaser1.rb", "randomchaser.rb" など適当な名前にしておいてください。
-    - ディレクトリ以下の拡張子が".rb"のファイルを全て検索して、鬼・逃亡者として登録されます。
+- まず ChaserStrategy, EscapeeStrategy を継承したクラスのスクリプトをどこかのディレクトリにおいてください。ここでは"our\_strategies" に置いたとして話をします。
+  - クラス名、ファイル名は重複してはいけないので、"foo\_chaser\_strategy.rb", "bar\_escapee\_strategy.rb" など適当な名前にしておいてください。
+  - ディレクトリ以下の拡張子が".rb"のファイルを全て検索して、ChaserStrategy, EscapeeStrategyを継承したクラスが鬼・逃亡者として認識されます。
 - 実行コマンドは以下の通りです。
   ```
-  ruby round_robin_stage/round_robin_stage.rb
+  ruby round_robin_stage/round_robin_stage.rb -d our_strategies
   ```
 - 鬼・逃亡者の組み合わせの数だけ対決が実施されます。
   - さらに各対決で乱数を変えて複数回実行し、全員が捕まるまでの平均時刻を出力します。
@@ -69,11 +70,13 @@ group chase and escape (鬼ごっこ)
 
 ## 鬼・逃亡者のロジックの実装
 
-- 鬼は ChaserStrategy クラスを実装します。
+- 鬼は ChaserStrategy クラス継承したクラスを実装します。
   - 以下のサンプルの様に `#next_direction` メソッドを実装します。
+- 逃亡者は EscapeeStrategy クラスを継承したクラスを実装します。
+  - こちらも `#next_direction` メソッドを実装します。
 
-```rb:sample_chaser.rb
-class ChaserStrategy
+```rb:sample_chaser_strategy.rb
+class SampleChaserStrategy < ChaserStrategy
 
   def initialize
   end
@@ -106,5 +109,5 @@ end
   - ２マス以上の距離を移動することはできません。例えば[0,2]を返すことはできません。返すと例外が発生して終了します。
 - もし必要であれば、インスタンス変数を使っても構いません。
   - インスタンス変数を使えば自分の状態を覚えておくことができます。
-  - 各鬼、逃亡者ごとにStrategyクラスは作られます。
+    - 各鬼、逃亡者ごとにStrategyクラスのインスタンスが作られます。
 

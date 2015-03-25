@@ -1,6 +1,6 @@
 require 'pp'
 
-class EscapeeStrategy
+class OgiEscapeeStrategy < EscapeeStrategy
 
   def next_direction(chaser_positions, escapee_positions)
     dx, dy = chaser_positions.first

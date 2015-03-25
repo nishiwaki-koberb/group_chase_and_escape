@@ -1,6 +1,6 @@
 require 'pp'
 
-class ChaserStrategy
+class TokunagaChaserStrategy < ChaserStrategy
   def initialize
     @stage_number = 0
     #to store the direction history

@@ -1,6 +1,6 @@
 require 'pp'
 
-class ChaserStrategy
+class OgiChaserStrategy < ChaserStrategy
   @@chaser_count = 0
   @@zenigata_id = [1,2]
   @@zenigata2_id = [3]

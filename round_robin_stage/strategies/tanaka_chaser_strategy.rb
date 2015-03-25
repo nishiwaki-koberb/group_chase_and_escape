@@ -1,6 +1,6 @@
 require 'pp'
 
-class ChaserStrategy
+class TanakaChaserStrategy < ChaserStrategy
 
   def initialize
     @count = 0

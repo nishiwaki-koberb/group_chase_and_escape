@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'pp'
 
-class ChaserStrategy
+class TairaChaserStrategy < ChaserStrategy
 
   @@leader = nil
   @@target = nil
@@ -88,6 +88,7 @@ class ChaserStrategy
           return [x, y]
         end
       end
+      return chaser_positions.first
     end
   end
 
